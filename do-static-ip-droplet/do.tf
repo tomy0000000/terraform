@@ -1,5 +1,5 @@
-# Create a droplet on DigitalOcean
 resource "digitalocean_droplet" "droplet" {
+  # Available slugs: https://slugs.do-api.dev/
   image      = "ubuntu-22-04-x64" # Ubuntu 22.04 (LTS)
   name       = var.droplet_name
   region     = "sgp1"        # Singapore 1
