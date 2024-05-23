@@ -39,7 +39,6 @@ resource "aws_cloudfront_distribution" "asset-distribution" {
   http_version    = "http2and3"
   price_class     = "PriceClass_200"
   aliases         = [var.domain]
-  web_acl_id      = aws_wafv2_web_acl.asset-distribution-wafv2-web-acl.arn
 
   origin {
     domain_name              = aws_s3_bucket.asset-bucket.bucket_regional_domain_name
@@ -85,85 +84,4 @@ resource "aws_cloudfront_origin_access_control" "asset-distribution-origin-acces
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
-}
-
-resource "aws_wafv2_web_acl" "asset-distribution-wafv2-web-acl" {
-  name  = "${aws_s3_bucket.asset-bucket.id}-CloudFront-Metric"
-  scope = "CLOUDFRONT"
-
-  rule {
-    name     = "AWS-AWSManagedRulesAmazonIpReputationList"
-    priority = 0
-
-    override_action {
-      count {}
-    }
-
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesAmazonIpReputationList"
-        vendor_name = "AWS"
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWS-AWSManagedRulesAmazonIpReputationList"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "AWS-AWSManagedRulesCommonRuleSet"
-    priority = 1
-
-    override_action {
-      count {}
-    }
-
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesCommonRuleSet"
-        vendor_name = "AWS"
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWS-AWSManagedRulesCommonRuleSet"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "AWS-AWSManagedRulesKnownBadInputsRuleSet"
-    priority = 2
-
-    override_action {
-      count {}
-    }
-
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesKnownBadInputsRuleSet"
-        vendor_name = "AWS"
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWS-AWSManagedRulesKnownBadInputsRuleSet"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  default_action {
-    allow {}
-  }
-
-  visibility_config {
-    metric_name                = "${aws_s3_bucket.asset-bucket.id}-CloudFront-Metric"
-    cloudwatch_metrics_enabled = true
-    sampled_requests_enabled   = true
-  }
 }
