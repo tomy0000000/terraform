@@ -24,3 +24,8 @@ variable "domain" {
   type        = string
   description = "Domain name to serve the assets"
 }
+
+variable "access-domains" {
+  type        = list(string)
+  description = "List of domains to allow access to the assets"
+}
