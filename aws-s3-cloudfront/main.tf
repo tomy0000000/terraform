@@ -27,7 +27,7 @@ data "aws_iam_policy_document" "allow_access_from_s3_with_referer" {
     condition {
       test     = "StringLike"
       variable = "aws:Referer"
-      values   = formatlist("https://%s/*", var.access-domains)
+      values   = formatlist("%s/*", var.access-urls)
     }
   }
 }
